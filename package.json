@@ -1,0 +1,16 @@
+{
+  "name": "myotproject",
+  "version": "1.1.1",
+  "description": "\"这个是ot项目\"",
+  "main": "index.js",
+  "scripts": {
+    "start":"node ./ot-textarea/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.3",
+    "ws": "^8.5.0"
+  }
+}
