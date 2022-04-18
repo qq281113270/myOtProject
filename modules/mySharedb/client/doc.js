@@ -366,14 +366,14 @@ Doc.prototype._onConnectionStateChanged = function () {
 };
 
 Doc.prototype._resubscribe = function () {
-  if (!this.pendingSubscribe.length && this.wantSubscribe) {
-    return this.subscribe();
-  }
-  var willFetch = this.pendingSubscribe.some(function (request) {
-    return request.wantSubscribe;
-  });
-  if (!willFetch && this.pendingFetch.length) this.fetch();
-  this._flushSubscribe();
+  // if (!this.pendingSubscribe.length && this.wantSubscribe) {
+  //   return this.subscribe();
+  // }
+  // var willFetch = this.pendingSubscribe.some(function (request) {
+  //   return request.wantSubscribe;
+  // });
+  // if (!willFetch && this.pendingFetch.length) this.fetch();
+  // this._flushSubscribe();
 };
 
 // Request the current document snapshot or ops that bring us up to date
@@ -384,5 +384,16 @@ Doc.prototype.fetch = function (callback) {
     return;
   }
   this.pendingFetch.push(callback);
+};
+
+
+Doc.prototype.flush = function () {
+  // Ignore if we can't send or we are already sending an op
+  if (!this.connection.canSend || this.inflightOp) return;
+
+  // Send first pending op unless paused
+  // if (!this.paused && this.pendingOps.length) {
+  //   // this._sendOp();
+  // }
 };
 

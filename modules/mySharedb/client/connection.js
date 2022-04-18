@@ -1,3 +1,5 @@
+var util = require('../util');
+
 var emitter = require('../emitter');
 var Doc = require('./doc');
 
@@ -273,7 +275,7 @@ Connection.prototype._setState = function (newState, reason) {
         var snapshotRequest = this._snapshotRequests[id];
         snapshotRequest._onConnectionStateChanged();
     }
-    this.endBulk();
+    // this.endBulk();
 
     this.emit(newState, reason);
     this.emit('state', newState, reason);
@@ -407,3 +409,20 @@ Connection.prototype._initialize = function (message) {
 
     this._setState('connected');
 };
+
+
+// 设置已经连上状态 告诉服务器 客户端socket已经连上
+Connection.prototype._handleHandshake = function (error, message) {
+    if (error) return this.emit("error", error);
+    // 设置已经连上状态
+    this._initialize(message);
+  };
+  
+  // 设置批量订阅标志
+Connection.prototype.startBulk = function () {
+    // 批量订阅标志
+    if (!this.bulk) {
+      this.bulk = {};
+    }
+  };
+  

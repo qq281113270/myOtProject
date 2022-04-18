@@ -2,6 +2,34 @@ var emitter = require('./emitter');
 var StreamSocket = require('./stream-socket');
 var Connection = require('./client/connection');
 var Agent = require('./agent');
+var util = require('./util');
+
+
+
+
+
+
+
+
+//获取应答错误对象
+function getReplyErrorObject(err) {
+    if (typeof err === 'string') {
+        return {
+            code: 400,
+            message: err,
+        };
+    } else {
+        if (err.stack) {
+            console.info(err.stack);
+        }
+        return {
+            code: err.code,
+            message: err.message,
+        };
+    }
+}
+
+
 function Backend(options) {
     if (!(this instanceof Backend)) {
         return new Backend(options);
@@ -10,6 +38,9 @@ function Backend(options) {
 
     if (!options) options = {};
 }
+
+
+
 
 // 获取连接文档
 Backend.prototype.connect = function (connection, req, callback) {
@@ -68,7 +99,7 @@ Agent.prototype._open = function () {
     // 获取webscoket数据 接受  客户端 socket中的send
     // /处理来自客户端的传入消息
     this.stream.on('data', function (chunk) {
-        console.log('服务端获取到客户端socket发送的数据',chunk);
+        // console.log('服务端获取到客户端socket发送的数据', chunk);
         // console.log('chunk======', chunk);
         if (agent.closed) return;
 
@@ -107,7 +138,8 @@ Agent.prototype._handleMessage = function (request, callback) {
                 if (request.id) {
                     this.src = request.id;
                 }
-                debugger;
+                // console.log('request======', request);
+                // debugger;
                 // 发送一个hs给客户端
                 return callback(null, this._initMessage('hs'));
             case 'qf':
@@ -167,10 +199,10 @@ Agent.prototype._handleMessage = function (request, callback) {
                     );
                 }
                 // 提交
-                console.log('this._submit========');
-                console.log('request=======', request);
-                console.log('op=======', op);
-                console.log('callback=======', callback);
+                // console.log('this._submit========');
+                // console.log('request=======', request);
+                // console.log('op=======', op);
+                // console.log('callback=======', callback);
                 //　发送给其他客户端
                 return this._submit(
                     request.c,
@@ -235,9 +267,17 @@ Agent.prototype._handleMessage = function (request, callback) {
 
 // 发送消息给自己客户端去除op操作
 Agent.prototype._reply = function (request, err, message) {
-    // console.log('_reply=', request);
+    //    console.log('_reply=', request);
     var agent = this;
     var backend = agent.backend;
+    // if (err) {
+    //     console.log('err====================',err)
+    //     //获取应答错误对象
+    //     request.error = getReplyErrorObject(err);
+    //     //
+    //     agent.send(request);
+    //     return;
+    // }
 
     if (!message) message = {};
 
@@ -257,6 +297,7 @@ Agent.prototype._reply = function (request, err, message) {
     }
     // 去除 op 操作
     var middlewareContext = { request: request, reply: message };
+    // console.log('middlewareContext.reply=', middlewareContext.reply);
     agent.send(middlewareContext.reply);
 };
 
@@ -268,7 +309,6 @@ Agent.prototype.send = function (message) {
     // 发消息给客户
     this.stream.write(message);
 };
-
 
 module.exports = Backend;
 emitter.mixin(Backend);

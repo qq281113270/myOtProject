@@ -1,3 +1,5 @@
+var util = require('./util');
+
 var types = require('./types');
 function guid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(

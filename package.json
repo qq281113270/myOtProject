@@ -4,7 +4,7 @@
   "description": "\"这个是ot项目\"",
   "main": "index.js",
   "scripts": {
-    "start":"node ./ot-textarea/server.js",
+    "start": "node ./ot-textarea/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
